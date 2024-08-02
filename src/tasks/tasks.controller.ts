@@ -6,12 +6,13 @@ import {
   Body,
   Patch,
   Delete,
+  Query,
 } from '@nestjs/common';
 
 @Controller('tasks')
 export class TasksController {
-  @Get() // GET tasks
-  findAll() {
+  @Get() // GET tasks or /tasks?checked=value
+  findAll(@Query('checked') checked?: boolean) {
     return [];
   }
 
