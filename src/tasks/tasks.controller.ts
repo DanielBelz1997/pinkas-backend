@@ -22,7 +22,7 @@ export class TasksController {
   }
 
   @Post() // POST /tasks
-  create(@Body() task: { id: string; name: string; checked: boolean }) {
+  create(@Body() task: { id: string; item: string; checked: boolean }) {
     return task;
   }
 

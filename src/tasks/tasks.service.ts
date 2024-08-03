@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { task } from '../database/schema';
+import { DrizzleService } from '../database/drizzle.service';
+import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class TasksService {
-  private tasks = [
-    { id: 1, name: 'tomato', checked: true },
-    { id: 2, name: 'chips', checked: false },
-    { id: 3, name: 'salt', checked: true },
-    { id: 4, name: 'pita', checked: false },
-  ];
+  constructor(private readonly drizzleService: DrizzleService) {}
 
-  findAll(checked?: boolean) {
+  async findAll(checked?: boolean) {
+    const { db } = this.drizzleService;
+    let query = db.select().from(task);
     if (checked) {
-      return this.tasks.filter((task) => task.checked === true);
+      query = query.where(eq(task.checked, checked));
     }
 
-    return this.tasks;
+    const result = await query.execute();
+    return result;
   }
 
   findOne(id: number) {
@@ -22,4 +23,6 @@ export class TasksService {
 
     return task;
   }
+
+  create(task: { id: number; item: string; checked: boolean }) {}
 }
