@@ -1,25 +1,49 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { Prisma, Task } from '@prisma/client';
 
 @Injectable()
 export class TasksService {
-  private tasks = [
-    { id: 1, name: 'tomato', checked: true },
-    { id: 2, name: 'chips', checked: false },
-    { id: 3, name: 'salt', checked: true },
-    { id: 4, name: 'pita', checked: false },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  findAll(checked?: boolean) {
-    if (checked) {
-      return this.tasks.filter((task) => task.checked === true);
-    }
-
-    return this.tasks;
+  async findAll(
+    checked?: boolean | Prisma.BoolNullableFilter<'Task'>,
+  ): Promise<Task[]> {
+    return this.prisma.task.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+      where: {
+        checked: checked !== undefined ? checked : {},
+      },
+    });
   }
 
-  findOne(id: number) {
-    const task = this.tasks.find((task) => task.id === id);
+  async findOne(id: number): Promise<Task | null> {
+    return this.prisma.task.findUnique({
+      where: { id: id },
+    });
+  }
 
-    return task;
+  async createItem(task: { item: string; checked: boolean }): Promise<Task> {
+    return this.prisma.task.create({
+      data: task,
+    });
+  }
+
+  async updateItem(
+    id: number,
+    taskUpdate: { item: string; checked: boolean },
+  ): Promise<Task> {
+    return this.prisma.task.update({
+      where: { id },
+      data: taskUpdate,
+    });
+  }
+
+  async deleteItem(id: number): Promise<Task> {
+    return this.prisma.task.delete({
+      where: { id: id },
+    });
   }
 }
