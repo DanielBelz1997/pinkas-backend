@@ -9,9 +9,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, ValidationPipe } from '@nestjs/common';
 
 import { parseChecked } from 'src/utils/parsingCheck.util';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -28,16 +30,16 @@ export class TasksController {
   }
 
   @Post() // POST /tasks
-  create(@Body() task: { item: string; checked: boolean }) {
-    return this.tasksService.createItem(task);
+  create(@Body(ValidationPipe) CreateTaskDto: CreateTaskDto) {
+    return this.tasksService.createItem(CreateTaskDto);
   }
 
   @Patch(':id') // PATCH /tasks/:id
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() taskUpdate: { item: string; checked: boolean },
+    @Body(ValidationPipe) UpdateTaskDto: UpdateTaskDto,
   ) {
-    return this.tasksService.updateItem(id, taskUpdate);
+    return this.tasksService.updateItem(id, UpdateTaskDto);
   }
 
   @Delete(':id') // DELETE /tasks/:id

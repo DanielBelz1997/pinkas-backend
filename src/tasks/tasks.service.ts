@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { Prisma, Task } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
+
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -9,7 +13,7 @@ export class TasksService {
   async findAll(
     checked?: boolean | Prisma.BoolNullableFilter<'Task'>,
   ): Promise<Task[]> {
-    return this.prisma.task.findMany({
+    return await this.prisma.task.findMany({
       orderBy: {
         id: 'asc',
       },
@@ -20,29 +24,30 @@ export class TasksService {
   }
 
   async findOne(id: number): Promise<Task | null> {
-    return this.prisma.task.findUnique({
+    const task = await this.prisma.task.findUnique({
       where: { id: id },
     });
+
+    if (!task) throw new NotFoundException('Task Not Found');
+
+    return task;
   }
 
-  async createItem(task: { item: string; checked: boolean }): Promise<Task> {
-    return this.prisma.task.create({
-      data: task,
+  async createItem(CreateTaskDto: CreateTaskDto): Promise<Task> {
+    return await this.prisma.task.create({
+      data: CreateTaskDto,
     });
   }
 
-  async updateItem(
-    id: number,
-    taskUpdate: { item: string; checked: boolean },
-  ): Promise<Task> {
-    return this.prisma.task.update({
+  async updateItem(id: number, UpdateTaskDto: UpdateTaskDto): Promise<Task> {
+    return await this.prisma.task.update({
       where: { id },
-      data: taskUpdate,
+      data: UpdateTaskDto,
     });
   }
 
   async deleteItem(id: number): Promise<Task> {
-    return this.prisma.task.delete({
+    return await this.prisma.task.delete({
       where: { id: id },
     });
   }
