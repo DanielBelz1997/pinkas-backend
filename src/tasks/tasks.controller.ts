@@ -10,10 +10,9 @@ import {
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { ParseIntPipe, ValidationPipe } from '@nestjs/common';
+import { Task } from '@prisma/client';
 
 import { parseChecked } from 'src/utils/parsingCheck.util';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -30,14 +29,14 @@ export class TasksController {
   }
 
   @Post() // POST /tasks
-  create(@Body(ValidationPipe) CreateTaskDto: CreateTaskDto) {
+  create(@Body(ValidationPipe) CreateTaskDto: Task) {
     return this.tasksService.createItem(CreateTaskDto);
   }
 
   @Patch(':id') // PATCH /tasks/:id
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(ValidationPipe) UpdateTaskDto: UpdateTaskDto,
+    @Body(ValidationPipe) UpdateTaskDto: Task,
   ) {
     return this.tasksService.updateItem(id, UpdateTaskDto);
   }

@@ -3,12 +3,9 @@ import { PrismaService } from 'prisma/prisma.service';
 import { Prisma, Task } from '@prisma/client';
 import { NotFoundException } from '@nestjs/common';
 
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { CreateTaskDto } from './dto/create-task.dto';
-
 @Injectable()
 export class TasksService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll(
     checked?: boolean | Prisma.BoolNullableFilter<'Task'>,
@@ -33,13 +30,13 @@ export class TasksService {
     return task;
   }
 
-  async createItem(CreateTaskDto: CreateTaskDto): Promise<Task> {
+  async createItem(CreateTaskDto: Task): Promise<Task> {
     return await this.prisma.task.create({
       data: CreateTaskDto,
     });
   }
 
-  async updateItem(id: number, UpdateTaskDto: UpdateTaskDto): Promise<Task> {
+  async updateItem(id: number, UpdateTaskDto: Task): Promise<Task> {
     return await this.prisma.task.update({
       where: { id },
       data: UpdateTaskDto,
