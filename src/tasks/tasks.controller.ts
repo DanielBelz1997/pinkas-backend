@@ -26,7 +26,7 @@ export class TasksController {
   // overwrite it like we did here.
   @Get() // GET tasks or /tasks?checked=value
   findAll(@Ip() ip: string, @Query('checked') checked?: string) {
-    this.logger.log(`Request for all Tasks\t${ip}`);
+    this.logger.log(`Request for all Tasks\t${ip}`, TasksController.name);
     const formatChecked = parseChecked(checked);
     return this.tasksService.findAll(formatChecked);
   }
