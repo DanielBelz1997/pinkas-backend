@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   Query,
+  Ip,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { ParseIntPipe, ValidationPipe } from '@nestjs/common';
@@ -14,15 +15,18 @@ import { Task } from '@prisma/client';
 // import { Throttle, SkipThrottle } from '@nestjs/throttler';
 
 import { parseChecked } from 'src/utils/parsingCheck.util';
+import { MyLoggerService } from 'src/my-logger/my-logger.service';
 
 // SkipThrottle(); for skipping the rate limiting rules of all the requests in the controller
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
+  private readonly logger = new MyLoggerService(TasksController.name);
   // @Throttle({ short: { ttl: 1000, limit: 1 } }); with this you can use a option for rate limiting and
   // overwrite it like we did here.
   @Get() // GET tasks or /tasks?checked=value
-  findAll(@Query('checked') checked?: string) {
+  findAll(@Ip() ip: string, @Query('checked') checked?: string) {
+    this.logger.log(`Request for all Tasks\t${ip}`);
     const formatChecked = parseChecked(checked);
     return this.tasksService.findAll(formatChecked);
   }
