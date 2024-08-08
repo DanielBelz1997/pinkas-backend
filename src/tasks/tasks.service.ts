@@ -22,7 +22,7 @@ export class TasksService {
 
   async findOne(id: number): Promise<Task | null> {
     const task = await this.prisma.task.findUnique({
-      where: { id: id },
+      where: { id },
     });
 
     if (!task) throw new NotFoundException('Task Not Found');
@@ -45,7 +45,7 @@ export class TasksService {
 
   async deleteItem(id: number): Promise<Task> {
     return await this.prisma.task.delete({
-      where: { id: id },
+      where: { id },
     });
   }
 }
