@@ -18,7 +18,7 @@ import { parseChecked } from 'src/utils/parsingCheck.util';
 import { MyLoggerService } from 'src/my-logger/my-logger.service';
 
 // SkipThrottle(); for skipping the rate limiting rules of all the requests in the controller
-@Controller('tasks')
+@Controller('task')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
   private readonly logger = new MyLoggerService(TasksController.name);
